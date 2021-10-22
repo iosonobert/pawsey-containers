@@ -2,15 +2,21 @@
 
 Build the docker file locally and push the container to dockerhub
 
-sudo docker build -t mrayson/ocean_python:sfoda005_iwaves050 .
+sudo docker build -t mrayson/sfoda:sfoda006 .
 
 Test it runs
 
-sudo docker run mrayson/ocean_python:sfoda005_iwaves050 python 
+sudo docker run mrayson/sfoda:sfoda006 python 
 
 (It will crash due to not finding a file but should load the libraries fine...)
 
 Push to docker hub
+
+or... convert to singularit and copy directly to pawsey
+
+## Convert to a singularity image
+
+singularity build python_sfoda006.sif docker-daemon://mrayson/sfoda:sfoda006
 
 ###sudo docker tag iwaves latest
 (optional login: `sudo docker login`)

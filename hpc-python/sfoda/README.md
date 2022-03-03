@@ -16,7 +16,7 @@ or... convert to singularit and copy directly to pawsey
 
 ## Convert to a singularity image
 
-singularity build python_sfoda006.sif docker-daemon://mrayson/sfoda:sfoda006
+sudo singularity build python_sfoda006.sif docker-daemon://mrayson/sfoda:sfoda006
 
 ###sudo docker tag iwaves latest
 (optional login: `sudo docker login`)

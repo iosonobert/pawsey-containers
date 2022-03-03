@@ -9,7 +9,8 @@ RUN apt-get update \
 
 
 # Install extra python packages for oceanography
-RUN pip install --upgrade --ignore-installed numpy==1.17.4
+#RUN pip install --upgrade --ignore-installed numpy==1.17.4
+RUN pip install --upgrade --ignore-installed numpy==1.20.0
 RUN pip install \
 	gsw \
 	netcdf4 \

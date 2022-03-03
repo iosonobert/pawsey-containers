@@ -12,6 +12,14 @@ sudo docker run mrayson/ocean_python:sfoda005_iwaves050 python
 
 Push to docker hub
 
+or... convert to singularity and copy directly to pawsey
+
+## Convert to a singularity image
+
+sudo singularity build python_oceanpython_sfoda005_iwaves_050.sif docker-daemon://mrayson/ocean_python:sfoda005_iwaves050
+
+
+
 ###sudo docker tag iwaves latest
 (optional login: `sudo docker login`)
 

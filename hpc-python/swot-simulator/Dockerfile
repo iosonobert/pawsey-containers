@@ -10,6 +10,9 @@ USER root
 
 RUN conda install -c conda-forge swot_simulator
 
+RUN pip install \
+        numpy==1.22
+
 USER $NB_USER
 
 

@@ -1,0 +1,53 @@
+#!/bin/bash -l
+# Allocate slurm resources, edit as necessary
+#SBATCH --account=pawsey0106
+#SBATCH --partition=work
+#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=08:00:00
+#SBATCH --job-name=python-singularity
+#SBATCH --output=LOGS/python-%j.out
+#SBATCH --export=NONE
+#####
+# Run python in a container
+#
+# Usage:
+#       sbatch <path_to>/start_python.slm python_script.py <additional args sent to script>
+ 
+python_script=$1
+ 
+
+#Set these to have singularity bind data locations
+export SINGULARITY_BINDPATH=/group:/group,/scratch:/scratch,/run:/run,$HOME:$HOME 
+
+#This is needed to setup conda in the container correctly
+export SINGULARITYENV_PREPEND_PATH=/srv/conda/envs/notebook/bin:/srv/conda/condabin:/srv/conda/bin
+export SINGULARITYENV_XDG_DATA_HOME=$MYSCRATCH/.local
+
+# OpenMP settings
+export SINGULARITYENV_OMP_NUM_THREADS=8  #To define the number of threads
+export SINGULARITYENV_OMP_PROC_BIND=close  #To bind (fix) threads (allocating them as close as possible)
+export SINGULARITYENV_OMP_PLACES=cores     #To bind threads to cores
+
+
+# End user-specfified environment variables
+###
+
+# Set the image and tag we want to use
+#image="docker://jupyter/datascience-notebook:latest"
+image="docker://mrayson/jupyter_sfoda:latest"
+ 
+# Get the image filename
+imagename=${image##*/}
+imagename=${imagename/:/_}.sif
+ 
+# Load Singularity
+module load singularity/3.8.6
+ 
+# Pull our image in a folder
+singularity pull $imagename $image
+echo $imagename $image
+srun --export=ALL -m block:block:block singularity exec \
+    ${imagename} python ${python_script} $2 $3 $4 $5
+

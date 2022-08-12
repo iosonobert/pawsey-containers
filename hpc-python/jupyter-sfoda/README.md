@@ -1,6 +1,6 @@
 ## Running a jupyter notebook on setonix
 
-1. `sbatch <path_to>/start_jupyter.slm <path_for_notebook_home>
+1. `sbatch <path_to>/start_jupyter.slm <path_for_notebook_home>`
 2. `tail LOGS/jupyter-<jobid>.out`
 3. Copy the line that says `ssh -f -N -l ...`
 4. Paste this line into a separate (local) terminal. This will create a *tunnel* to the appropriate port.

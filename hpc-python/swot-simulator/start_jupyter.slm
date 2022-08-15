@@ -17,8 +17,7 @@ notebook_dir=$1 #"${MYSCRATCH}/"
  
 
 #Set these to have singularity bind data locations
-#export SINGULARITY_BINDPATH=/group:/group,/scratch:/scratch,/run:/run,$HOME:$HOME 
-export SINGULARITY_BINDPATH=$MYSOFTWARE:$MYSOFTWARE,$MYSCRATCH:$MYSCRATCH,/run:/run,$HOME:$HOME 
+export SINGULARITY_BINDPATH=/group:/group,/scratch:/scratch,/run:/run,$HOME:$HOME 
 
 #This is needed to setup conda in the container correctly
 export SINGULARITYENV_PREPEND_PATH=/srv/conda/envs/notebook/bin:/srv/conda/condabin:/srv/conda/bin
@@ -34,8 +33,7 @@ export SINGULARITYENV_OMP_PLACES=cores     #To bind threads to cores
 ###
 
 # Set the image and tag we want to use
-#image="docker://jupyter/datascience-notebook:latest"
-image="docker://mrayson/jupyter_sfoda:latest"
+image="docker://mrayson/swot_simulator:latest"
  
 # You should not need to edit the lines below
  
@@ -109,17 +107,11 @@ echo "Logging jupyter notebook session to $LOGFILE"
 srun --export=ALL -m block:block:block singularity exec -C \
   -B ${notebook_dir}:/home/joyvan \
   -B ${notebook_dir}:${HOME} \
-  -B/tmp:/tmp \
-  -B $(mktemp -d):/run/user \
   ${imagename} \
   jupyter notebook $@ \
   --no-browser \
   --port=${LOCALHOST_PORT} --ip=$JNHOST \
   --notebook-dir=${dir} >& $LOGFILE &
-  # Attempt at linking slurm...
-  #-B /etc/slurm,/usr/lib64/liblua5.3.so.5,/usr/lib64/liblua.so.5.3,/usr/lib64/libmunge.so.2,/usr/lib64/slurm \
-  #-B /usr/bin/sbatch,/usr/bin/scancel,/usr/bin/squeue,/var/run/munge,/run/munge  \
-  #-B /usr/lib64/libreadline.so,/usr/lib64/libhistory.so,/usr/lib64/libtinfo.so,/usr/lib64/libjson-c.so.3 \
 
 JNPID=$!
 

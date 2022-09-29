@@ -1,19 +1,23 @@
 #!/bin/bash -l
 # Allocate slurm resources, edit as necessary
 #SBATCH --account=pawsey0106
-#SBATCH --partition=work
+##SBATCH --partition=work
+#SBATCH --partition=workq
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
 #SBATCH --time=08:00:00
 #SBATCH --job-name=python-singularity
-#SBATCH --output=LOGS/python-%j.out
+#SBATCH --output=python-%j.out
 #SBATCH --export=NONE
 #####
 # Run python in a container
 #
 # Usage:
 #       sbatch <path_to>/start_python.slm python_script.py <additional args sent to script>
+#
+# AZ USAGE:
+#       sbatch pawsey-containers/hpc-python/jupyter-sfoda/start_python.slm /scratch/pawsey0106/azulberti/code/singularity_test.py
  
 python_script=$1
  
@@ -41,10 +45,12 @@ image="docker://mrayson/jupyter_sfoda:latest"
 # Get the image filename
 imagename=${image##*/}
 imagename=${imagename/:/_}.sif
+imagename=$MYSCRATCH/jupyter_sfoda_latest.sif 
  
 # Load Singularity
-module load singularity/3.8.6
- 
+#module load singularity/3.8.6
+module load singularity
+
 # Pull our image in a folder
 singularity pull $imagename $image
 echo $imagename $image

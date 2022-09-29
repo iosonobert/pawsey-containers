@@ -4,8 +4,8 @@
 #SBATCH --partition=workq
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=14
-#SBATCH --time=08:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --time=00:20:00
 #SBATCH --job-name=jupyter_notebook
 #SBATCH --output=jupyter-%j.out
 #SBATCH --export=NONE
@@ -15,8 +15,6 @@
 # Should be in a writable path with some space, like /scratch
 notebook_dir=$1 #"${MYSCRATCH}/"
  
-export SINGULARITY_CACHEDIR=$MYSCRATCH/singularity
-export SINGULARITY_TMPDIR=$MYSCRATCH/singularity
 
 #Set these to have singularity bind data locations
 #export SINGULARITY_BINDPATH=/group:/group,/scratch:/scratch,/run:/run,$HOME:$HOME 
@@ -27,7 +25,7 @@ export SINGULARITYENV_PREPEND_PATH=/srv/conda/envs/notebook/bin:/srv/conda/conda
 export SINGULARITYENV_XDG_DATA_HOME=$MYSCRATCH/.local
 
 # OpenMP settings
-export SINGULARITYENV_OMP_NUM_THREADS=14  #To define the number of threads
+export SINGULARITYENV_OMP_NUM_THREADS=8  #To define the number of threads
 export SINGULARITYENV_OMP_PROC_BIND=close  #To bind (fix) threads (allocating them as close as possible)
 export SINGULARITYENV_OMP_PLACES=cores     #To bind threads to cores
 
@@ -77,8 +75,7 @@ host=$(hostname)
 module load singularity
  
 # Pull our image in a folder
-#singularity pull $imagename $image
-SINGULARITY_CACHEDIR=$MYSCRATCH/singularity singularity pull $imagename $image
+singularity pull $imagename $image
 echo $imagename $image
  
 ### Pangeo method for running notebooks
@@ -109,7 +106,7 @@ echo "Logging jupyter notebook session to $LOGFILE"
 ### Launch our container
 ### and mount our working directory to /home/jovyan in the container
 ### and bind the run time directory to our home directory
-srun --export=ALL singularity exec -C \
+srun --export=ALL -m block:block:block singularity exec -C \
   -B ${notebook_dir}:/home/joyvan \
   -B ${notebook_dir}:${HOME} \
   -B/tmp:/tmp \
@@ -155,7 +152,7 @@ TOKEN=$(echo $ADDRESS | awk -F'=' ' { print $NF } ')
 
 cat << EOF
 Run the following command on your desktop or laptop:
-    ssh -f -N -l $USER -L ${LOCALHOST_PORT}:${JNHOST}:$PORT -L $DASK_PORT:${JNHOST}:$DASK_PORT magnus.pawsey.org.au
+    ssh -f -N -l $USER -L ${LOCALHOST_PORT}:${JNHOST}:$PORT -L $DASK_PORT:${JNHOST}:$DASK_PORT setonix.pawsey.org.au
 Log in with your username/password or SSH keys (there will be no prompt).
 Then open a browser and go to http://localhost:${LOCALHOST_PORT}. The Jupyter web
 interface will ask you for a token. Use the following:
